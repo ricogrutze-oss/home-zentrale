@@ -6,10 +6,10 @@
    =================================================================== */
 window.HZ_CONFIG = {
   // Web-App-URL aus Apps Script (Bereitstellen → Bereitstellungen verwalten), endet auf /exec
-  kalenderApi: '',
+  kalenderApi: 'https://script.google.com/macros/s/AKfycbwaecHtqf79uiJ8UjZ5XR6zbfOtwPqfi6BZpjAfjq3MLWQw3TPFm9cqVD-LbebygNol/exec',
 
   // dasselbe Wort wie TOKEN im Apps Script
-  token: '',
+  token: 'harnack-kalender-73',
 
   // Adresse deines Heizungs-Dashboards
   heizungUrl: 'https://ricogrutze-oss.github.io/heizung/',
