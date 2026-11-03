@@ -4,158 +4,187 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Home-Zentrale</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300;12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
 <style>
-/* ======= Farben & Grundlayout (dunkel, gut lesbar an der Wand) ======= */
+/* =====================================================================
+   Gestaltung
+   - Tiefblauer "Abendhimmel" statt Schwarz: ruhig an der Wand, blendet nicht
+   - Bricolage Grotesque für Uhr und Überschriften, Atkinson Hyperlegible
+     für alles, was man aus 3 m Entfernung lesen muss
+   - Das eine Farbige: die Schulfächer in den Farben von Ilses Magnetkärtchen
+   ===================================================================== */
 :root{
-  --bg:#0e1318; --card:#18202a; --card2:#202a36; --line:#2a3644;
-  --text:#e9eef3; --muted:#8d9aa8; --accent:#4f9cf7; --warn:#f5a524; --cold:#7cc4ff;
+  --sky:#132235;        /* Hintergrund */
+  --sky-2:#1a2d44;      /* Fläche (Schultafel, Wochenspalten) */
+  --sky-3:#24395387;    /* Trennlinien, leise Flächen */
+  --paper:#f4f2ee;      /* Schrift */
+  --mist:#9db0c4;       /* leise Schrift */
+  --dawn:#ffc46b;       /* Hervorhebung: jetzt, heute, Mitbringen */
+  --rain:#8fd0ff;       /* Regen, Kälte */
+  --display:'Bricolage Grotesque','Segoe UI',Roboto,sans-serif;
+  --read:'Atkinson Hyperlegible','Segoe UI',Roboto,Arial,sans-serif;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:var(--bg);color:var(--text);
-  font-family:-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  -webkit-user-select:none;user-select:none;overflow:hidden}
-body{display:flex;flex-direction:column}
+html,body{height:100%}
+body{
+  background:var(--sky);
+  background-image:radial-gradient(120% 80% at 85% -10%, #22405f 0%, rgba(19,34,53,0) 60%);
+  color:var(--paper);font-family:var(--read);
+  -webkit-user-select:none;user-select:none;overflow:hidden;
+  display:flex;flex-direction:column;
+  -webkit-font-smoothing:antialiased;
+}
+.num{font-variant-numeric:tabular-nums}
 
-/* Kopfzeile */
-header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px}
-.clock{font-size:64px;font-weight:300;letter-spacing:1px;line-height:1}
-.date{font-size:20px;color:var(--muted);margin-top:4px}
-.head-weather{display:flex;align-items:center;text-align:right}
-.head-weather .ico{font-size:48px;margin-right:12px}
-.head-weather .t{font-size:44px;font-weight:300}
-.head-weather .d{font-size:15px;color:var(--muted)}
+/* ---------- Kopf: Uhr links, Wetter-Satz rechts ---------- */
+header{display:flex;align-items:flex-end;justify-content:space-between;padding:18px 28px 6px;gap:24px}
+.clock{font-family:var(--display);font-weight:300;font-size:84px;line-height:.86;letter-spacing:-3px;font-variant-numeric:tabular-nums;font-optical-sizing:auto}
+.date{font-family:var(--display);font-weight:500;font-size:22px;color:var(--mist);margin-top:8px}
+.now-weather{text-align:right;max-width:46%}
+.now-weather .row{display:flex;align-items:center;justify-content:flex-end;gap:14px}
+.now-weather .ico{font-size:40px;line-height:1}
+.now-weather .t{font-family:var(--display);font-weight:300;font-size:48px;line-height:.9;letter-spacing:-1px}
+.now-weather .mx{font-size:17px;color:var(--mist);margin-left:4px}
+.now-weather .say{font-size:17px;margin-top:6px;line-height:1.3}
+.now-weather .say b{color:var(--dawn);font-weight:700}
+.now-weather .sub{font-size:14px;color:var(--mist);margin-top:3px}
 
-/* Hauptbereich */
-main{flex:1;min-height:0;padding:8px 20px 12px;position:relative}
+/* ---------- Hauptbereich ---------- */
+main{flex:1;min-height:0;position:relative;padding:14px 28px 10px;overflow:hidden}
+nav{flex-shrink:0}
+header{flex-shrink:0}
+body{height:100vh;height:100dvh}
 .view{display:none;height:100%}
 .view.active{display:block}
-.card{background:var(--card);border-radius:18px;padding:16px 18px;overflow:hidden}
-.card h2{font-size:15px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:10px}
+h2{font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:-.2px;margin-bottom:10px}
+h2 small{font-family:var(--read);font-weight:400;font-size:15px;color:var(--mist);margin-left:8px;letter-spacing:0}
 
-/* Startansicht */
-.start{display:grid;grid-template-columns:1.25fr 1fr;grid-gap:16px;height:100%}
-.right{display:grid;grid-template-rows:auto auto auto;grid-gap:16px;min-height:0;overflow-y:auto;align-content:start}
-.agenda{overflow-y:auto;-webkit-overflow-scrolling:touch}
-.right .card{overflow:visible}
-.left{display:grid;grid-template-rows:auto 1fr;grid-gap:16px;min-height:0}
-.left .school{overflow:visible}
-.school .kids{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));grid-gap:4px 20px}
-.school h2{margin-bottom:2px}
-#heatTile{display:none}  /* Heizung ist über die Leiste unten erreichbar; bei Bedarf wieder einblenden */
+/* Startansicht: oben Schulzeile, darunter heute groß + die nächsten 6 Tage */
+#view-start.active{display:flex;flex-direction:column}
+.start{display:grid;grid-template-columns:minmax(300px,.85fr) 1.6fr;grid-gap:28px;flex:1;min-height:0}
+.today-h{font-size:28px;margin-bottom:8px}
+.col{min-height:0;display:flex;flex-direction:column}
 
-/* Termine */
-.day{margin-bottom:14px}
-.day-label{font-size:17px;font-weight:600;margin-bottom:6px;color:var(--accent)}
-.day-label.other{color:var(--text)}
-.ev{display:flex;align-items:stretch;background:var(--card2);border-radius:12px;margin-bottom:6px;overflow:hidden}
-.ev .bar{width:6px;flex-shrink:0}
-.ev .body{padding:8px 12px;flex:1;min-width:0}
-.ev .time{font-size:14px;color:var(--muted)}
-.ev .title{font-size:19px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ev .meta{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.ev.past{opacity:.45}
-.ev.now{box-shadow:inset 0 0 0 2px var(--accent)}
-.empty{color:var(--muted);font-size:16px;padding:4px 0 8px}
-.legend{margin-top:4px}
-.chip{display:inline-block;font-size:13px;color:var(--muted);margin:0 12px 6px 0}
-.chip i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+.scroll{overflow-y:auto;-webkit-overflow-scrolling:touch;min-height:0;flex:1;padding-right:4px}
+.scroll::-webkit-scrollbar{width:0}
 
-/* Wetter */
-.w-now{display:flex;align-items:center;margin-bottom:6px}
-.w-now .ico{font-size:64px;margin-right:14px;line-height:1}
-.w-now .t{font-size:52px;font-weight:300;line-height:1}
-.w-now .desc{font-size:18px}
-.w-now .sub{font-size:14px;color:var(--muted);margin-top:2px}
-.hints{margin:8px 0 10px}
-.hint{font-size:15px;background:var(--card2);border-radius:10px;padding:7px 10px;margin-bottom:6px}
-.hint.warn{border-left:4px solid var(--warn)}
-.hint.cold{border-left:4px solid var(--cold)}
-.hourly{display:grid;grid-template-columns:repeat(8,1fr);grid-gap:4px;text-align:center;margin-bottom:12px}
-.hourly div{background:var(--card2);border-radius:10px;padding:6px 0}
-.hourly .h{font-size:13px;color:var(--muted)}
-.hourly .i{font-size:22px;margin:2px 0}
-.hourly .v{font-size:15px}
-.hourly .p{font-size:11px;color:var(--cold);height:13px}
-.daily{display:grid;grid-template-columns:repeat(5,1fr);grid-gap:4px;text-align:center}
-.daily div{padding:4px 0}
-.daily .n{font-size:14px;color:var(--muted)}
-.daily .i{font-size:26px;margin:2px 0}
-.daily .mm{font-size:15px}
-.daily .mm span{color:var(--muted)}
-.daily .p{font-size:12px;color:var(--cold)}
-.sun{font-size:13px;color:var(--muted);margin-top:8px;text-align:center}
+/* ---------- Termine als Zeitleiste ---------- */
+.day{margin-bottom:18px}
+.day-name{font-family:var(--display);font-weight:500;font-size:20px;color:var(--mist);margin-bottom:6px}
+.day-name.today{color:var(--paper)}
+.ev{display:grid;grid-template-columns:68px 5px 1fr;grid-column-gap:12px;align-items:stretch;padding:7px 0}
+.ev .tm{font-size:19px;color:var(--mist);text-align:right;padding-top:2px;font-variant-numeric:tabular-nums}
+.ev .tm span{display:block;font-size:13px;opacity:.75}
+.ev .bar{border-radius:2px}
+.ev .ti{font-size:25px;line-height:1.22}
+.ev .me{font-size:15px;color:var(--mist);margin-top:1px}
+.ev.allday .tm{font-size:13px;padding-top:5px}
+.ev.past{opacity:.38}
+.ev.now .ti{color:var(--dawn)}
+.ev.now .tm{color:var(--dawn)}
+.empty{color:var(--mist);font-size:17px;padding:6px 0 4px 74px}
+.legend{font-size:13px;color:var(--mist);padding-top:6px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin:0 6px 0 14px;vertical-align:1px}
+.legend i:first-child{margin-left:0}
 
-/* Heizungs-Kachel */
-.tile{display:flex;align-items:center;justify-content:space-between;cursor:pointer}
-.tile .big{font-size:24px}
-.tile .small{font-size:14px;color:var(--muted);margin-top:2px}
-.tile .arrow{font-size:32px;color:var(--muted)}
-.tile:active{background:var(--card2)}
+/* ---------- Schulzeile mit Magnetkärtchen (klein) ---------- */
+.kids-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));grid-gap:10px;margin-bottom:16px;cursor:pointer}
+.kidc{background:var(--sky-2);border-radius:14px;padding:10px 12px 9px}
+.kid-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:7px;gap:8px}
+.kid-name{font-family:var(--display);font-weight:700;font-size:17px}
+.kid-when{font-size:13px;color:var(--mist);white-space:nowrap}
+.mags{display:flex;flex-wrap:wrap;gap:4px}
+.mag{display:inline-flex;align-items:center;gap:5px;font-weight:700;font-size:13px;line-height:1;padding:6px 8px 5px;border-radius:6px;box-shadow:0 2px 0 rgba(0,0,0,.28)}
+.mag em{font-style:normal;font-weight:400;font-size:11px;opacity:.8}
+.mag.after{background:transparent;color:var(--paper);box-shadow:inset 0 0 0 1.5px var(--mist)}
+.mag.after em{opacity:.85}
+.bring{margin-top:6px;font-size:13px;color:var(--dawn)}
+.free{font-size:15px;padding:2px 0}
 
-/* Schule (Kachel auf Start) */
-.school .who{font-size:16px;font-weight:600;margin-top:6px}
-.school .subj{font-size:15px;margin-top:1px}
-.school .until{font-size:13px;color:var(--muted)}
-.school .bring{display:inline-block;font-size:13px;background:var(--card2);border-left:3px solid var(--warn);border-radius:6px;padding:2px 8px;margin:4px 6px 0 0}
-.school .free{font-size:16px;color:var(--muted);margin-top:4px}
+/* ---------- Die nächsten 6 Tage (Start) ---------- */
+.weekstrip{display:grid;grid-template-columns:repeat(6,1fr);grid-gap:8px;min-height:0}
+.weekstrip .wcol{padding:10px 8px}
+.weekstrip .wh b{font-size:17px}
+.weekstrip .wev .ti{font-size:15px}
+.wev .ti{-webkit-hyphens:auto;hyphens:auto;overflow-wrap:break-word}
 
-/* Schule (Ansicht) */
-.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));grid-gap:16px;height:100%;overflow-y:auto}
-.plan table{width:100%;border-collapse:separate;border-spacing:3px;font-size:15px}
-.plan th{color:var(--muted);font-weight:600;padding:6px 4px;font-size:14px}
-.plan th.hl{color:var(--accent)}
-.plan td{background:var(--card2);border-radius:8px;padding:8px 6px;text-align:center}
-.plan td.n{background:none;color:var(--muted);font-size:13px;text-align:left;white-space:nowrap}
-.plan td.hl{box-shadow:inset 0 0 0 2px var(--accent)}
-.plan td.e{background:none}
+/* ---------- Wochenansicht ---------- */
+.week{display:grid;grid-template-columns:repeat(7,1fr);grid-gap:10px;height:100%}
+.wcol{background:var(--sky-2);border-radius:16px;padding:12px 10px;overflow-y:auto;-webkit-overflow-scrolling:touch;border-top:3px solid transparent}
+.wcol::-webkit-scrollbar{width:0}
+.wcol.today{border-top-color:var(--dawn)}
+.wh{margin-bottom:10px}
+.wh b{font-family:var(--display);font-weight:700;font-size:19px;display:block}
+.wh span{font-size:14px;color:var(--mist)}
+.wev{border-left:4px solid;padding:3px 0 3px 8px;margin-bottom:10px}
+.wev .tm{font-size:13px;color:var(--mist);font-variant-numeric:tabular-nums}
+.wev .ti{font-size:16px;line-height:1.25}
+.wev.past{opacity:.4}
+.wempty{color:var(--mist);font-size:14px}
 
-/* Wochenansicht */
-.week{display:grid;grid-template-columns:repeat(7,1fr);grid-gap:8px;height:100%}
-.wcol{background:var(--card);border-radius:14px;padding:10px 8px;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.wcol.today{box-shadow:inset 0 0 0 2px var(--accent)}
-.wcol .wh{text-align:center;margin-bottom:8px}
-.wcol .wh b{display:block;font-size:16px}
-.wcol .wh span{font-size:13px;color:var(--muted)}
-.wcol .ev .title{font-size:15px;white-space:normal}
-.wcol .ev .body{padding:6px 8px}
-.wcol .ev .time{font-size:12px}
+/* ---------- Schul-Ansicht ---------- */
+.plans{height:100%;overflow-y:auto}
+.plan + .plan{margin-top:24px}
+.plan table{width:100%;border-collapse:separate;border-spacing:6px;table-layout:fixed}
+.plan th{font-family:var(--display);font-weight:500;font-size:17px;color:var(--mist);padding:2px 0 4px}
+.plan th.hl{color:var(--dawn)}
+.plan td{text-align:center;vertical-align:middle;height:44px}
+.plan td.n{text-align:right;color:var(--mist);font-size:13px;white-space:nowrap;width:92px;padding-right:6px;line-height:1.3}
+.plan td.n b{display:block;font-size:15px;color:var(--paper);font-weight:400}
+.plan td .mag{width:100%;justify-content:center;padding:11px 6px 10px;font-size:15px}
+.plan td .mag em{font-size:12px}
+.plan td.hl .mag{outline:3px solid var(--dawn);outline-offset:1px}
+.plan td.hl.e{box-shadow:inset 0 0 0 1px var(--sky-3);border-radius:7px}
 
-/* Heizung (eingebettet) */
-.frame{width:100%;height:100%;border:0;border-radius:14px;background:#fff}
-.notice{padding:30px;text-align:center;color:var(--muted);font-size:17px;line-height:1.6}
-.notice code{color:var(--text);background:var(--card2);padding:2px 6px;border-radius:6px}
+/* ---------- Heizung ---------- */
+.frame{width:100%;height:100%;border:0;border-radius:16px;background:#fff}
+.notice{background:var(--sky-2);border-radius:20px;padding:36px;color:var(--mist);font-size:18px;line-height:1.6;max-width:640px}
+.notice code{color:var(--paper);background:var(--sky);padding:2px 6px;border-radius:5px}
 
-/* Navigation unten */
-nav{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);background:var(--card)}
-nav button{background:none;border:0;color:var(--muted);font-size:18px;padding:14px 0 16px;font-family:inherit;cursor:pointer}
-nav button.active{color:var(--accent)}
-nav button .ni{display:block;font-size:24px;margin-bottom:2px}
+/* ---------- Leiste unten ---------- */
+nav{display:flex;align-items:stretch;padding:0 16px;border-top:1px solid var(--sky-3)}
+nav button{flex:1;background:none;border:0;color:var(--mist);font-family:var(--display);font-weight:500;font-size:19px;
+  padding:14px 0 16px;cursor:pointer;position:relative}
+nav button .ni{font-size:20px;margin-right:8px;vertical-align:-2px;filter:grayscale(1);opacity:.75}
+nav button.active{color:var(--paper)}
+nav button.active .ni{filter:none;opacity:1}
+nav button.active:after{content:'';position:absolute;left:30%;right:30%;top:-1px;height:3px;border-radius:0 0 3px 3px;background:var(--dawn)}
+nav button:focus-visible{outline:2px solid var(--dawn);outline-offset:-4px;border-radius:8px}
+.status{position:absolute;right:28px;bottom:2px;font-size:11px;color:var(--mist);opacity:.6}
+.demo{position:absolute;left:28px;bottom:2px;font-size:12px;color:var(--dawn)}
 
-/* Statuszeile & Demo-Hinweis */
-.status{position:absolute;right:26px;bottom:16px;font-size:11px;color:var(--muted);opacity:.7}
-.demo{position:absolute;left:26px;bottom:16px;font-size:12px;color:var(--warn)}
-
-/* Nachtmodus */
-#night{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#000;z-index:10;
+/* ---------- Nacht ---------- */
+#night{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#05080d;z-index:10;
   flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
 #night.on{display:flex}
-#night .clock{font-size:120px;color:#3a4552}
-#night .date{color:#2a333d;font-size:22px}
-#night .nw{color:#2a333d;font-size:22px;margin-top:10px}
+#night .clock{font-size:150px;color:#3a4a5e}
+#night .date{color:#2b3747;font-size:24px}
+#night .nw{color:#2b3747;font-size:22px;margin-top:12px;font-family:var(--read)}
 
-/* Schmale Bildschirme (Handy-Vorschau / Hochformat) */
-@media (max-width:820px){
-  header{padding:10px 14px 6px}
-  .clock{font-size:46px}
-  .head-weather .ico{font-size:36px}
-  .head-weather .t{font-size:32px}
-  main{padding:6px 12px 10px;overflow-y:auto}
-  .start{grid-template-columns:1fr;height:auto}
-  .right{grid-template-rows:auto auto}
-  .agenda{max-height:none}
-  .week{grid-template-columns:1fr;height:auto}
+/* ---------- Schmal (Handy / Hochformat) ---------- */
+@media (max-width:860px){
+  header{flex-direction:column;align-items:flex-start;padding:14px 16px 4px}
+  .clock{font-size:72px}
+  .now-weather{text-align:left;max-width:none}
+  .now-weather .row{justify-content:flex-start}
+  .now-weather .t{font-size:52px}
+  main{padding:10px 16px 28px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .status,.demo{position:static;display:block;margin-top:12px}
+  .start{grid-template-columns:1fr;grid-gap:20px;height:auto}
+  .weekstrip{grid-template-columns:1fr 1fr}
+  #view-start.active{display:block}
   .view.active{height:auto}
-  #view-heizung.active{height:100%}
+  .scroll{overflow:visible}
+  .week{grid-template-columns:1fr;height:auto}
+  #view-heizung.active{height:70vh}
+  nav button{font-size:15px}
+  nav button .ni{display:block;margin:0 0 2px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .view.active{animation:show .25s ease-out}
+  @keyframes show{from{opacity:0}to{opacity:1}}
 }
 </style>
 </head>
@@ -166,55 +195,32 @@ nav button .ni{display:block;font-size:24px;margin-bottom:2px}
     <div class="clock" id="clock">--:--</div>
     <div class="date" id="date"></div>
   </div>
-  <div class="head-weather" id="headWeather"></div>
+  <div class="now-weather" id="nowWeather"></div>
 </header>
 
 <main>
-  <!-- START -->
   <section class="view active" id="view-start">
+    <div class="kids-strip" id="schoolTile" role="button" tabindex="0" aria-label="Stundenplan öffnen"></div>
     <div class="start">
-      <div class="left">
-        <div class="card school" id="schoolTile" style="cursor:pointer"><h2>Schule</h2><div class="empty">Lade Stundenplan …</div></div>
-        <div class="card agenda">
-          <h2>Termine</h2>
-          <div id="agenda"><div class="empty">Lade Termine …</div></div>
-          <div class="legend" id="legend"></div>
-        </div>
+      <div class="col today-col">
+        <h2 class="today-h">Heute</h2>
+        <div class="scroll" id="agenda"><div class="empty">Termine werden geladen …</div></div>
+        <div class="legend" id="legend"></div>
       </div>
-      <div class="right">
-        <div class="card" id="weatherCard"><h2>Wetter</h2><div class="empty">Lade Wetter …</div></div>
-        <div class="card tile" id="heatTile">
-          <div>
-            <div class="big">🔥 Heizung</div>
-            <div class="small" id="heatSmall">Übersicht öffnen</div>
-          </div>
-          <div class="arrow">›</div>
-        </div>
-      </div>
+      <div class="weekstrip" id="weekStrip"></div>
     </div>
   </section>
 
-  <!-- KALENDER -->
-  <section class="view" id="view-kalender">
-    <div class="week" id="week"></div>
-  </section>
-
-  <!-- SCHULE -->
-  <section class="view" id="view-schule">
-    <div class="plans" id="plans"></div>
-  </section>
-
-  <!-- HEIZUNG -->
-  <section class="view" id="view-heizung">
-    <div id="heatWrap" style="height:100%"></div>
-  </section>
+  <section class="view" id="view-kalender"><div class="week" id="week"></div></section>
+  <section class="view" id="view-schule"><div class="plans" id="plans"></div></section>
+  <section class="view" id="view-heizung"><div id="heatWrap" style="height:100%"></div></section>
 
   <div class="demo" id="demo"></div>
   <div class="status" id="status"></div>
 </main>
 
 <nav>
-  <button data-view="start" class="active"><span class="ni">🏠</span>Start</button>
+  <button data-view="start" class="active"><span class="ni">🏠</span>Heute</button>
   <button data-view="kalender"><span class="ni">📅</span>Woche</button>
   <button data-view="schule"><span class="ni">🎒</span>Schule</button>
   <button data-view="heizung"><span class="ni">🔥</span>Heizung</button>
@@ -236,18 +242,35 @@ var CONFIG = {
   lon: 11.6276,
 
   // URL der Apps-Script-Web-App (kalender.gs) – leer = Demo-Termine
-  kalenderApi: 'https://script.google.com/macros/s/AKfycbwaecHtqf79uiJ8UjZ5XR6zbfOtwPqfi6BZpjAfjq3MLWQw3TPFm9cqVD-LbebygNol/exec',
-  token: 'harnack-kalender-73',              // muss zum TOKEN im Apps Script passen
+  kalenderApi: '',
+  token: '',              // muss zum TOKEN im Apps Script passen
 
   // URL deines bestehenden Heizungs-Dashboards (GitHub-Seite)
-  heizungUrl: 'https://ricogrutze-oss.github.io/heizung/',
+  heizungUrl: '',
 
   tageVoraus: 7,          // so viele Tage zeigt die Terminliste
-  schuleMorgenAb: 14,     // ab dieser Uhrzeit zeigt die Schul-Kachel schon den nächsten Schultag
-  nichtInKachel: ['Mittagessen'],   // diese Einträge stehen nur im Wochenplan, nicht in der Kachel
-  nachtVon: 23,           // Nachtmodus (schwarzer Bildschirm, Uhr gedimmt)
+  schuleMorgenAb: 14,     // ab dieser Uhrzeit zeigt die Schultafel schon den nächsten Schultag
+  nichtInKachel: ['Mittagessen'],   // diese Einträge stehen nur im Wochenplan, nicht auf der Startseite
+  nachtVon: 23,           // Nachtmodus (dunkler Bildschirm, Uhr gedimmt)
   nachtBis: 6,
-  zurueckZumStartNachMin: 3   // ohne Berührung zurück zur Startseite
+  zurueckZumStartNachMin: 3,  // ohne Berührung zurück zur Startseite
+
+  // Fächerfarben wie auf der Magnettafel: [Teil des Fachnamens, Hintergrund, Schrift]
+  fachFarben: [
+    ['Mathe',       '#232a4a', '#ffffff'],
+    ['Deutsch',     '#f0683a', '#ffffff'],
+    ['Sport',       '#2f5f9e', '#ffffff'],
+    ['Kunst',       '#ef8f97', '#2a1416'],
+    ['Sachkunde',   '#1d6b46', '#ffffff'],
+    ['Musik',       '#f4c544', '#2b2208'],
+    ['Religion',    '#aaa3d8', '#1c1838'],
+    ['Betreuung',   '#e6e9f0', '#1d2433'],
+    ['Mittagessen', '#5fb59b', '#0f2a22'],
+    ['AG',          '#f6c1a4', '#3a1d10'],
+    ['Englisch',    '#6c8fb8', '#ffffff'],
+    ['Kita',        '#9fd17a', '#16300b']
+  ],
+  fachFarbeSonst: ['#c9d3df', '#1b2433']
 };
 /* ===================================================================== */
 
@@ -288,10 +311,14 @@ function dayLabel(d){
   return TAGE[d.getDay()] + ', ' + d.getDate() + '. ' + MONATE[d.getMonth()];
 }
 
+/* ---------------- Zwischenspeicher (letzte Daten bei WLAN-Ausfall) ---------------- */
+function saveCache(key, val){ try { localStorage.setItem('hz_' + key, JSON.stringify({t: Date.now(), v: val})); } catch (e) {} }
+function readCache(key){ try { var x = JSON.parse(localStorage.getItem('hz_' + key)); return x || null; } catch (e) { return null; } }
+
 /* ---------------- Uhr & Nachtmodus ---------------- */
 function tick(){
   var n = new Date();
-  var dateTxt = TAGE[n.getDay()] + ', ' + n.getDate() + '. ' + MONATE[n.getMonth()] + ' ' + n.getFullYear();
+  var dateTxt = TAGE[n.getDay()] + ', ' + n.getDate() + '. ' + MONATE[n.getMonth()];
   $('clock').textContent = hm(n);  $('nclock').textContent = hm(n);
   $('date').textContent = dateTxt; $('ndate').textContent = dateTxt;
 
@@ -300,7 +327,6 @@ function tick(){
                                                  : (h >= CONFIG.nachtVon && h < CONFIG.nachtBis);
   $('night').className = (nachts && Date.now() > state.wakeUntil) ? 'on' : '';
 
-  // nach Inaktivität zurück zur Startseite
   if (Date.now() - state.lastTouch > CONFIG.zurueckZumStartNachMin * 60000) {
     var active = document.querySelector('nav button.active');
     if (active && active.getAttribute('data-view') !== 'start') showView('start');
@@ -322,20 +348,16 @@ var navBtns = document.querySelectorAll('nav button');
 for (var b = 0; b < navBtns.length; b++) {
   navBtns[b].addEventListener('click', function(){ showView(this.getAttribute('data-view')); });
 }
-$('heatTile').addEventListener('click', function(){ showView('heizung'); });
 $('schoolTile').addEventListener('click', function(){ showView('schule'); });
-
-/* ---------------- Zwischenspeicher (letzte Daten bei WLAN-Ausfall) ---------------- */
-function saveCache(key, val){ try { localStorage.setItem('hz_' + key, JSON.stringify({t: Date.now(), v: val})); } catch (e) {} }
-function readCache(key){ try { var x = JSON.parse(localStorage.getItem('hz_' + key)); return x || null; } catch (e) { return null; } }
+$('schoolTile').addEventListener('keydown', function(e){ if (e.key === 'Enter') showView('schule'); });
 
 /* ---------------- Heizung ---------------- */
 function loadHeat(){
   if (state.heatLoaded) return;
   var wrap = $('heatWrap');
   if (!CONFIG.heizungUrl) {
-    wrap.innerHTML = '<div class="card notice">Hier erscheint dein Heizungs-Dashboard.<br>' +
-      'Trage dafür oben im Code bei <code>heizungUrl</code> die Adresse deiner Heizungs-Seite ein.</div>';
+    wrap.innerHTML = '<div class="notice">Hier erscheint dein Heizungs-Dashboard. ' +
+      'Trag dafür oben im Code bei <code>heizungUrl</code> die Adresse deiner Heizungsseite ein.</div>';
     return;
   }
   wrap.innerHTML = '<iframe class="frame" src="' + esc(CONFIG.heizungUrl) + '"></iframe>';
@@ -355,61 +377,29 @@ function loadWeather(){
 }
 
 function renderWeather(){
-  var card = $('weatherCard');
   var d = state.weather;
-  if (!d) { card.innerHTML = '<h2>Wetter</h2><div class="empty">Wetter gerade nicht erreichbar.</div>'; return; }
+  if (!d) { $('nowWeather').innerHTML = '<div class="sub">Wetter nicht erreichbar</div>'; return; }
+  var c = d.current, w = wmo(c.weather_code, c.is_day), t = Math.round(c.temperature_2m);
 
-  var c = d.current, w = wmo(c.weather_code, c.is_day);
-  var t = Math.round(c.temperature_2m);
-
-  // Kopfzeile
-  $('headWeather').innerHTML = '<div class="ico">' + w[0] + '</div><div><div class="t">' + t + '°</div><div class="d">' + esc(CONFIG.ort) + '</div></div>';
-  $('nweather').textContent = t + '° · ' + w[1];
-  $('heatSmall').textContent = 'Übersicht öffnen · draußen ' + t + '°';
-
-  // Stundenwerte ab jetzt
   var nowKey = c.time.substring(0, 13), start = 0;
   for (var i = 0; i < d.hourly.time.length; i++) { if (d.hourly.time[i].substring(0, 13) === nowKey) { start = i; break; } }
 
-  // Hinweise: Regen in den nächsten 12 h, Frost heute Nacht
-  var hints = '', rainAt = null;
-  for (var k = start; k < start + 12 && k < d.hourly.time.length; k++) {
-    if (d.hourly.precipitation_probability[k] >= 50) { rainAt = d.hourly.time[k].substring(11, 13); break; }
+  // nur der heutige Tag: Regen bis Mitternacht, Frost bis morgen früh
+  var todayKey = c.time.substring(0, 10), rainAt = null, minNext = 99;
+  for (var k = start; k < d.hourly.time.length && d.hourly.time[k].substring(0, 10) === todayKey; k++) {
+    if (d.hourly.precipitation_probability[k] >= 50) { rainAt = parseInt(d.hourly.time[k].substring(11, 13), 10); break; }
   }
-  if (rainAt !== null) hints += '<div class="hint warn">☔ Regen wahrscheinlich ab ' + parseInt(rainAt, 10) + ' Uhr – Schirm mitnehmen</div>';
-  else hints += '<div class="hint">🌂 In den nächsten 12 Stunden kein Regen erwartet</div>';
-  var minNext = 99;
   for (var f = start; f < start + 18 && f < d.hourly.time.length; f++) minNext = Math.min(minNext, d.hourly.temperature_2m[f]);
-  if (minNext <= 1) hints += '<div class="hint cold">❄️ Bis zu ' + Math.round(minNext) + '° – Frost möglich, Autoscheibe!</div>';
+  var say = esc(w[1]);
+  if (rainAt !== null) say += (rainAt === new Date().getHours() ? ', <b>jetzt Regen</b>' : ', <b>ab ' + rainAt + ' Uhr Regen</b>');
+  else say += ', heute trocken';
+  if (minNext <= 1) say += ', <b>Frost möglich</b>';
 
-  // Stundenleiste (8 Stunden)
-  var hourly = '';
-  for (var h = start + 1; h <= start + 8 && h < d.hourly.time.length; h++) {
-    var hw = wmo(d.hourly.weather_code[h], d.hourly.is_day[h]);
-    var p = d.hourly.precipitation_probability[h];
-    hourly += '<div><div class="h">' + parseInt(d.hourly.time[h].substring(11, 13), 10) + ' h</div><div class="i">' + hw[0] +
-      '</div><div class="v">' + Math.round(d.hourly.temperature_2m[h]) + '°</div><div class="p">' + (p >= 20 ? p + ' %' : '') + '</div></div>';
-  }
-
-  // Tage
-  var daily = '';
-  for (var j = 0; j < 5 && j < d.daily.time.length; j++) {
-    var dt = new Date(d.daily.time[j] + 'T12:00:00');
-    var dw = wmo(d.daily.weather_code[j], 1);
-    var dp = d.daily.precipitation_probability_max[j];
-    daily += '<div><div class="n">' + (j === 0 ? 'Heute' : TAGE_K[dt.getDay()]) + '</div><div class="i">' + dw[0] +
-      '</div><div class="mm">' + Math.round(d.daily.temperature_2m_max[j]) + '° <span>' + Math.round(d.daily.temperature_2m_min[j]) +
-      '°</span></div><div class="p">' + (dp != null && dp >= 20 ? '💧' + dp + ' %' : '&nbsp;') + '</div></div>';
-  }
-
-  card.innerHTML = '<h2>Wetter</h2>' +
-    '<div class="w-now"><div class="ico">' + w[0] + '</div><div><div class="t">' + t + '°</div></div>' +
-    '<div style="margin-left:16px"><div class="desc">' + w[1] + '</div><div class="sub">gefühlt ' + Math.round(c.apparent_temperature) +
-    '° · 💧 ' + c.relative_humidity_2m + ' % · 💨 ' + Math.round(c.wind_speed_10m) + ' km/h</div></div></div>' +
-    '<div class="hints">' + hints + '</div>' +
-    '<div class="hourly">' + hourly + '</div>' +
-    '<div class="daily">' + daily + '</div>' +
-    '<div class="sun">🌅 ' + d.daily.sunrise[0].substring(11) + ' · 🌇 ' + d.daily.sunset[0].substring(11) + '</div>';
+  $('nowWeather').innerHTML =
+    '<div class="row"><div class="ico">' + w[0] + '</div><div class="t">' + t + '°</div>' +
+    '<div class="mx">' + Math.round(d.daily.temperature_2m_max[0]) + '° / ' + Math.round(d.daily.temperature_2m_min[0]) + '°</div></div>' +
+    '<div class="say">' + say + '</div>';
+  $('nweather').textContent = t + '°, ' + w[1];
 }
 
 /* ---------------- Kalender ---------------- */
@@ -441,52 +431,66 @@ function eventsForDay(day){
   return out;
 }
 
-function evHtml(x, now){
-  var e = x.e, time;
-  if (e.allDay) time = 'Ganztägig';
-  else time = hm(x.s) + ' – ' + hm(x.en);
-  var cls = 'ev';
-  if (!e.allDay && x.en < now) cls += ' past';
-  else if (!e.allDay && x.s <= now && x.en > now) cls += ' now';
-  var meta = esc(e.calendar || '') + (e.location ? ' · ' + esc(e.location) : '');
-  return '<div class="' + cls + '"><div class="bar" style="background:' + esc(e.color || '#4f9cf7') + '"></div><div class="body">' +
-    '<div class="time">' + time + '</div><div class="title">' + esc(e.title || '(ohne Titel)') + '</div>' +
-    (meta ? '<div class="meta">' + meta + '</div>' : '') + '</div></div>';
+function evState(x, now){
+  if (x.e.allDay) return '';
+  if (x.en < now) return ' past';
+  if (x.s <= now && x.en > now) return ' now';
+  return '';
+}
+
+function agendaRow(x, now){
+  var e = x.e, cls = 'ev' + (e.allDay ? ' allday' : '') + evState(x, now);
+  var tm = e.allDay ? 'ganztags' : hm(x.s) + '<span>bis ' + hm(x.en) + '</span>';
+  var meta = [];
+  if (e.calendar && state.cal.calendars && state.cal.calendars.length > 1) meta.push(esc(e.calendar));
+  if (e.location) meta.push(esc(e.location));
+  return '<div class="' + cls + '"><div class="tm">' + tm + '</div><div class="bar" style="background:' + esc(e.color || '#8fd0ff') + '"></div>' +
+    '<div><div class="ti">' + esc(e.title || '(ohne Titel)') + '</div>' + (meta.length ? '<div class="me">' + meta.join(', ') + '</div>' : '') + '</div></div>';
 }
 
 function renderCalendar(){
   var now = new Date(), today = midnight(now);
-
   if (!state.cal) {
-    $('agenda').innerHTML = '<div class="empty">Kalender gerade nicht erreichbar.</div>';
+    $('agenda').innerHTML = '<h2>Termine</h2><div class="empty" style="padding-left:0">Kalender nicht erreichbar. Prüf das WLAN; die Seite versucht es alle 5 Minuten neu.</div>';
     return;
   }
 
-  // Terminliste (Start)
-  var html = '';
-  for (var i = 0; i < CONFIG.tageVoraus; i++) {
-    var day = addDays(today, i), evs = eventsForDay(day);
-    if (i > 1 && !evs.length) continue;  // leere Tage ab übermorgen ausblenden
-    html += '<div class="day"><div class="day-label' + (i === 0 ? '' : ' other') + '">' + dayLabel(day) + '</div>';
-    if (!evs.length) html += '<div class="empty">Keine Termine</div>';
-    for (var k = 0; k < evs.length; k++) html += evHtml(evs[k], now);
-    html += '</div>';
-  }
+  // Heute groß
+  var evs0 = eventsForDay(today), html = '';
+  for (var k = 0; k < evs0.length; k++) html += agendaRow(evs0[k], now);
+  if (!evs0.length) html = '<div class="empty" style="padding-left:0">Heute steht nichts an.</div>';
   $('agenda').innerHTML = html;
 
-  // Legende
+  // Die nächsten 6 Tage als Spalten
+  var ws = '';
+  for (var n = 1; n <= 6; n++) {
+    var sd = addDays(today, n), sevs = eventsForDay(sd);
+    ws += '<div class="wcol"><div class="wh"><b>' + (n === 1 ? 'Morgen' : TAGE[sd.getDay()]) + '</b><span>' + sd.getDate() + '. ' + MONATE[sd.getMonth()].substring(0, 3) + '</span></div>';
+    if (!sevs.length) ws += '<div class="wempty">frei</div>';
+    for (var m2 = 0; m2 < sevs.length; m2++) {
+      var y = sevs[m2];
+      ws += '<div class="wev" style="border-color:' + esc(y.e.color || '#8fd0ff') + '"><div class="tm">' +
+        (y.e.allDay ? 'ganztags' : hm(y.s)) + '</div><div class="ti">' + esc(y.e.title || '(ohne Titel)') + '</div></div>';
+    }
+    ws += '</div>';
+  }
+  $('weekStrip').innerHTML = ws;
+
   var cals = state.cal.calendars || [], lg = '';
-  for (var c = 0; c < cals.length; c++) lg += '<span class="chip"><i style="background:' + esc(cals[c].color) + '"></i>' + esc(cals[c].name) + '</span>';
+  if (cals.length > 1) for (var c = 0; c < cals.length; c++) lg += '<i style="background:' + esc(cals[c].color) + '"></i>' + esc(cals[c].name);
   $('legend').innerHTML = lg;
 
-  // Wochenansicht
   var wk = '';
   for (var d = 0; d < 7; d++) {
     var wd = addDays(today, d), wevs = eventsForDay(wd);
-    wk += '<div class="wcol' + (d === 0 ? ' today' : '') + '"><div class="wh"><b>' + (d === 0 ? 'Heute' : TAGE_K[wd.getDay()]) +
-      '</b><span>' + wd.getDate() + '.' + (wd.getMonth() + 1) + '.</span></div>';
-    if (!wevs.length) wk += '<div class="empty" style="text-align:center;font-size:13px">–</div>';
-    for (var m = 0; m < wevs.length; m++) wk += evHtml(wevs[m], now);
+    wk += '<div class="wcol' + (d === 0 ? ' today' : '') + '"><div class="wh"><b>' + (d === 0 ? 'Heute' : TAGE[wd.getDay()]) +
+      '</b><span>' + wd.getDate() + '. ' + MONATE[wd.getMonth()] + '</span></div>';
+    if (!wevs.length) wk += '<div class="wempty">frei</div>';
+    for (var m = 0; m < wevs.length; m++) {
+      var x = wevs[m];
+      wk += '<div class="wev' + evState(x, now) + '" style="border-color:' + esc(x.e.color || '#8fd0ff') + '"><div class="tm">' +
+        (x.e.allDay ? 'ganztags' : hm(x.s)) + '</div><div class="ti">' + esc(x.e.title || '(ohne Titel)') + '</div></div>';
+    }
     wk += '</div>';
   }
   $('week').innerHTML = wk;
@@ -497,25 +501,40 @@ function renderCalendar(){
 /* ---------------- Stundenplan ---------------- */
 var TAGE_KURZ_SCHULE = ['Mo','Di','Mi','Do','Fr'];
 
-// Welcher Schultag wird gezeigt? Mo–Fr vor schuleMorgenAb = heute, sonst nächster Wochentag
+function farbe(fach){
+  var f = String(fach || '').toLowerCase();
+  for (var i = 0; i < CONFIG.fachFarben.length; i++) {
+    if (f.indexOf(CONFIG.fachFarben[i][0].toLowerCase()) >= 0) return CONFIG.fachFarben[i];
+  }
+  return [null, CONFIG.fachFarbeSonst[0], CONFIG.fachFarbeSonst[1]];
+}
+function mag(fach, extra){
+  var c = farbe(fach);
+  return '<span class="mag" style="background:' + c[1] + ';color:' + c[2] + '">' + esc(fach) + (extra ? '<em>' + extra + '</em>' : '') + '</span>';
+}
+// "Judo 14:15-15:30" → Name + Zeit getrennt
+function splitTime(txt){
+  var m = String(txt).match(/^(.*?)\s*(\d{1,2}[:.]\d{2})\s*[-–]\s*(\d{1,2}[:.]\d{2})\s*$/);
+  return m ? { name: m[1], von: m[2], bis: m[3] } : { name: txt, von: '', bis: '' };
+}
+
 function schoolDay(){
   var n = new Date(), d = midnight(n), wd = n.getDay();
   if (wd >= 1 && wd <= 5 && n.getHours() < CONFIG.schuleMorgenAb) return d;
   do { d = addDays(d, 1); } while (d.getDay() === 0 || d.getDay() === 6);
   return d;
 }
-
-// Ferien/Feiertag an diesem Tag? (ganztägiger Termin mit "Ferien" im Titel oder aus einem Feiertags-/Ferienkalender)
-function freeDayReason(day){
+// kita = true: Schulferien zählen nicht, nur Feiertage
+function freeDayReason(day, kita){
   var evs = eventsForDay(day);
   for (var i = 0; i < evs.length; i++) {
     var e = evs[i].e;
     if (!e.allDay) continue;
-    if (/ferien/i.test(e.title || '') || /feiertag|ferien/i.test(e.calendar || '')) return e.title;
+    if (/feiertag/i.test(e.calendar || '')) return e.title;
+    if (!kita && (/ferien/i.test(e.title || '') || /ferien/i.test(e.calendar || ''))) return e.title;
   }
   return '';
 }
-
 function lessonsOf(kind, idx){
   var out = [];
   for (var i = 0; i < kind.rows.length; i++) {
@@ -524,7 +543,6 @@ function lessonsOf(kind, idx){
   }
   return out;
 }
-
 function bringFor(lessons, hinweise){
   var out = [], seen = {};
   for (var key in hinweise) {
@@ -540,59 +558,66 @@ function renderSchool(){
   var tile = $('schoolTile');
   var sp = state.cal && state.cal.stundenplan;
   if (!sp || !sp.kinder || !sp.kinder.length) {
-    tile.style.display = sp === undefined ? '' : 'none';  // kein Stundenplan eingerichtet → Kachel ausblenden
-    if (sp === undefined) tile.innerHTML = '<h2>Schule</h2><div class="empty">Kein Stundenplan eingerichtet.</div>';
-    $('plans').innerHTML = '<div class="card notice">Noch kein Stundenplan. Lege ihn in Google Sheets an (siehe Anleitung, Schritt B).</div>';
+    tile.style.display = 'none';
+    $('plans').innerHTML = '<div class="notice">Noch kein Stundenplan. Führ im Apps Script die Funktion <code>einrichten</code> aus und füll die Tabelle aus.</div>';
     return;
   }
   tile.style.display = '';
 
   var day = schoolDay(), idx = day.getDay() - 1;
-  var label = dayLabel(day);
-  if (label.indexOf(',') > 0) label = TAGE[day.getDay()];
-  var free = freeDayReason(day);
-
-  var html = '<h2>Schule · ' + esc(label) + '</h2>';
-  if (free) {
-    html += '<div class="free">🎉 Frei – ' + esc(free) + '</div>';
-  } else {
-    html += '<div class="kids">';
-    for (var k = 0; k < sp.kinder.length; k++) {
-      var kind = sp.kinder[k], ls = lessonsOf(kind, idx);
-      html += '<div><div class="who">' + esc(kind.name) + '</div>';
-      if (!ls.length) { html += '<div class="until">kein Unterricht eingetragen</div></div>'; continue; }
-      // Unterricht (Zeilen mit Zeit) und Nachmittag (Zeilen ohne Zeit) trennen
-      var names = [], extra = [], ende = '';
-      for (var i = 0; i < ls.length; i++) {
-        if (!ls[i].zeit) { extra.push(ls[i].fach); continue; }
-        if (ls[i].zeit.indexOf('-') > 0) ende = ls[i].zeit.split('-')[1].trim();
-        if (CONFIG.nichtInKachel.indexOf(ls[i].fach) >= 0) continue;
-        if (!names.length || names[names.length - 1] !== ls[i].fach) names.push(ls[i].fach);
-      }
-      if (names.length) html += '<div class="subj">' + esc(names.join(', ')) + '</div>';
-      if (ende) html += '<div class="until">Schluss ca. ' + esc(ende) + ' Uhr</div>';
-      if (extra.length) html += '<div class="subj">➜ ' + esc(extra.join(', ')) + '</div>';
-      var bring = bringFor(ls, sp.hinweise || {});
-      for (var b = 0; b < bring.length; b++) html += '<span class="bring">🎒 ' + esc(bring[b]) + '</span>';
-      html += '</div>';
+  var when = dayLabel(day);
+  if (when.indexOf(',') > 0) when = TAGE[day.getDay()];
+  var html = '';
+  for (var k = 0; k < sp.kinder.length; k++) {
+    var kind = sp.kinder[k], ls = lessonsOf(kind, idx);
+    var school = [], after = [], ende = '', kita = false;
+    for (var q = 0; q < ls.length; q++) if (/^kita/i.test(ls[q].fach)) kita = true;
+    var free = freeDayReason(day, kita);
+    for (var i = 0; i < ls.length; i++) {
+      if (!ls[i].zeit) { after.push(ls[i].fach); continue; }
+      if (ls[i].zeit.indexOf('-') > 0) ende = ls[i].zeit.split('-')[1].trim();
+      if (CONFIG.nichtInKachel.indexOf(ls[i].fach) >= 0) continue;
+      var last = school[school.length - 1];
+      if (last && last.fach === ls[i].fach) last.n++; else school.push({ fach: ls[i].fach, n: 1 });
     }
+    var head = when + (free ? ' frei' : (ende ? (kita ? ', abholen ' : ', Schluss ') + ende : ''));
+    html += '<div class="kidc"><div class="kid-head"><span class="kid-name">' + esc(kind.name) + '</span><span class="kid-when">' + esc(head) + '</span></div>';
+    if (free) { html += '<div class="free">' + esc(free) + '</div></div>'; continue; }
+    if (!school.length && !after.length) { html += '<div class="free">Kein Unterricht eingetragen</div></div>'; continue; }
+    html += '<div class="mags">';
+    for (var s = 0; s < school.length; s++) html += mag(school[s].fach, school[s].n > 1 ? school[s].n + ' Std.' : '');
+    for (var a = 0; a < after.length; a++) {
+      var st = splitTime(after[a]);
+      html += '<span class="mag after">' + esc(st.name) + (st.von ? '<em>' + esc(st.von) + '</em>' : '') + '</span>';
+    }
+    html += '</div>';
+    var bring = bringFor(ls, sp.hinweise || {});
+    if (bring.length) html += '<div class="bring">Einpacken: ' + esc(bring.join(', ')) + '</div>';
     html += '</div>';
   }
   tile.innerHTML = html;
 
-  // Ansicht "Schule": volle Wochenpläne
+  // Ansicht "Schule": die ganze Magnettafel
   var ph = '';
   for (var p = 0; p < sp.kinder.length; p++) {
     var kd = sp.kinder[p];
-    ph += '<div class="card plan"><h2>' + esc(kd.name) + '</h2><table><tr><th></th>';
-    for (var t = 0; t < 5; t++) ph += '<th' + (t === idx ? ' class="hl"' : '') + '>' + TAGE_KURZ_SCHULE[t] + '</th>';
+    ph += '<div class="plan"><h2>' + esc(kd.name) + '<small>Stundenplan</small></h2><table><tr><th></th>';
+    for (var t = 0; t < 5; t++) ph += '<th' + (t === idx ? ' class="hl"' : '') + '>' + TAGE[t + 1] + '</th>';
     ph += '</tr>';
     for (var r = 0; r < kd.rows.length; r++) {
-      var row = kd.rows[r];
-      ph += '<tr><td class="n">' + esc(row.stunde) + (/^\d+$/.test(row.stunde) ? '.' : '') + (row.zeit ? '<br>' + esc(row.zeit) : '') + '</td>';
+      var row = kd.rows[r], isNum = /^\d+$/.test(row.stunde);
+      var label = row.zeit ? '<b>' + esc(row.zeit.replace('-', '–')) + '</b>' + (isNum ? esc(row.stunde) + '. Stunde' : esc(row.stunde))
+                           : '<b>Nachmittag</b>';
+      ph += '<tr><td class="n">' + label + '</td>';
       for (var c = 0; c < 5; c++) {
-        var f = row.tage[c];
-        ph += '<td class="' + (f ? '' : 'e') + (c === idx && f ? ' hl' : '') + '">' + esc(f) + '</td>';
+        var f = row.tage[c], hl = c === idx ? ' hl' : '';
+        if (!f) { ph += '<td class="e' + hl + '"></td>'; continue; }
+        if (!row.zeit) {
+          var stt = splitTime(f);
+          ph += '<td class="' + hl + '"><span class="mag after">' + esc(stt.name) + (stt.von ? '<em>' + esc(stt.von) + '–' + esc(stt.bis) + '</em>' : '') + '</span></td>';
+        } else {
+          ph += '<td class="' + hl + '">' + mag(f) + '</td>';
+        }
       }
       ph += '</tr>';
     }
@@ -601,26 +626,22 @@ function renderSchool(){
   $('plans').innerHTML = ph;
 }
 
-/* Demo-Termine, solange keine Kalender-URL eingetragen ist */
+/* Demo-Daten, solange keine Kalender-URL eingetragen ist */
 function demoData(){
   var t = midnight(new Date());
   function at(day, h, m, dur){ var s = addDays(t, day); s.setHours(h, m, 0, 0); return [s.toISOString(), new Date(s.getTime() + dur * 60000).toISOString()]; }
   function allDay(day, days){ return [addDays(t, day).toISOString(), addDays(t, day + (days || 1)).toISOString()]; }
-  var C = { fam:['Familie','#4f9cf7'], arb:['Arbeit','#f5a524'], kid:['Kinder','#22c55e'], spo:['Sport','#e879f9'] };
-  function ev(title, r, cal, ad, loc){ return { title:title, start:r[0], end:r[1], allDay:!!ad, calendar:C[cal][0], color:C[cal][1], location:loc || '' }; }
+  function ev(title, r, ad, loc){ return { title:title, start:r[0], end:r[1], allDay:!!ad, calendar:'Kalender', color:'#8fd0ff', location:loc || '' }; }
   return {
-    calendars: [ {name:'Familie',color:'#4f9cf7'}, {name:'Arbeit',color:'#f5a524'}, {name:'Kinder',color:'#22c55e'}, {name:'Sport',color:'#e879f9'} ],
+    calendars: [ {name:'Kalender', color:'#8fd0ff'} ],
     events: [
-      ev('Gelbe Tonne rausstellen', allDay(0), 'fam', true),
-      ev('Einkaufen', at(0, 10, 0, 60), 'fam'),
-      ev('Kindergeburtstag', at(0, 15, 0, 150), 'kid', false, 'Spielplatz Stadtpark'),
-      ev('Zahnarzt', at(1, 8, 30, 45), 'fam'),
-      ev('Bürdemessung UW', at(1, 9, 30, 180), 'arb'),
-      ev('Schwimmkurs', at(1, 16, 0, 60), 'kid', false, 'Elbe-Schwimmhalle'),
-      ev('Laufgruppe', at(2, 18, 30, 60), 'spo'),
-      ev('Elternabend', at(3, 19, 0, 90), 'kid'),
-      ev('Herbstferien', allDay(4, 3), 'kid', true),
-      ev('Grillen bei Freunden', at(5, 17, 0, 240), 'fam')
+      ev('Gelbe Tonne rausstellen', allDay(0), true),
+      ev('Einkaufen', at(0, 10, 0, 60)),
+      ev('Kindergeburtstag', at(0, 15, 0, 150), false, 'Spielplatz Stadtpark'),
+      ev('Zahnarzt', at(1, 8, 30, 45)),
+      ev('Bürdemessung UW', at(1, 9, 30, 180)),
+      ev('Elternabend', at(3, 19, 0, 90), false, 'Grundschule'),
+      ev('Grillen bei Freunden', at(5, 17, 0, 240))
     ],
     stundenplan: {
       kinder: [
@@ -634,9 +655,13 @@ function demoData(){
           { stunde:'7', zeit:'13:00-13:45', tage:['','','Sachkunde','',''] },
           { stunde:'Nachm.', zeit:'', tage:['Judo 14:15-15:30','Schachzwerge 13:15-14:00','','Kinderyoga 14:00-15:00',''] },
           { stunde:'Nachm.', zeit:'', tage:['','','','Tanzen 16:00-17:00',''] }
+        ]},
+        { name: 'Jutta', rows: [
+          { stunde:'Kita', zeit:'07:30-15:30', tage:['Kita','Kita','Kita','Kita','Kita'] },
+          { stunde:'Extra', zeit:'', tage:['','Turnen','','Waldtag',''] }
         ]}
       ],
-      hinweise: { 'Sport':'Sportzeug', 'Judo':'Judoanzug', 'Tanzen':'Tanzsachen', 'Kunst':'Kunstsachen' }
+      hinweise: { 'Sport':'Sportzeug', 'Judo':'Judoanzug', 'Tanzen':'Tanzsachen', 'Kunst':'Kunstsachen', 'Turnen':'Turnbeutel', 'Wald':'Matschhose und Gummistiefel' }
     }
   };
 }
@@ -644,16 +669,15 @@ function demoData(){
 /* ---------------- Statuszeile ---------------- */
 function renderStatus(){
   var s = [];
-  if (state.weatherTime) s.push('Wetter ' + hm(state.weatherTime) + (state.weatherError ? ' ⚠' : ''));
-  if (state.calTime) s.push('Kalender ' + hm(state.calTime) + (state.calError ? ' ⚠' : ''));
-  else if (state.calError) s.push('Kalender ⚠');
-  $('status').textContent = s.join(' · ');
-  $('demo').textContent = state.isDemo ? 'Demo-Termine – Kalender-URL in CONFIG eintragen' : '';
+  if (state.weatherTime) s.push('Wetter ' + hm(state.weatherTime) + (state.weatherError ? ' (alt)' : ''));
+  if (state.calTime) s.push('Kalender ' + hm(state.calTime) + (state.calError ? ' (alt)' : ''));
+  else if (state.calError) s.push('Kalender nicht erreichbar');
+  $('status').textContent = s.length ? 'Stand: ' + s.join(', ') : '';
+  $('demo').textContent = state.isDemo ? 'Beispieldaten – trag oben im Code bei kalenderApi deine Script-Adresse ein' : '';
 }
 
 /* ---------------- Start ---------------- */
 tick();
-// zuletzt gespeicherte Daten sofort zeigen, dann frisch laden
 (function(){
   var w = readCache('weather');
   if (w && w.v) { state.weather = w.v; state.weatherTime = new Date(w.t); renderWeather(); }
@@ -664,10 +688,10 @@ tick();
 loadWeather();
 loadCalendar();
 setInterval(tick, 1000);
-setInterval(loadWeather, 15 * 60000);          // Wetter alle 15 min
-setInterval(loadCalendar, 5 * 60000);          // Termine alle 5 min
-setInterval(function(){ if (state.cal) renderCalendar(); }, 60000);  // "läuft gerade"-Markierung
-setTimeout(function(){ location.reload(); }, 6 * 3600000);           // alle 6 h neu laden (alte Tablets)
+setInterval(loadWeather, 15 * 60000);
+setInterval(loadCalendar, 5 * 60000);
+setInterval(function(){ if (state.cal) renderCalendar(); }, 60000);
+setTimeout(function(){ location.reload(); }, 6 * 3600000);
 </script>
 </body>
 </html>
