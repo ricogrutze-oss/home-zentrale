@@ -232,9 +232,12 @@ nav button:focus-visible{outline:2px solid var(--dawn);outline-offset:-4px;borde
   <div class="nw" id="nweather"></div>
 </div>
 
+<!-- Deine persönlichen Einstellungen (Script-Adresse, Token, Heizung) stehen in config.js.
+     Diese Datei bleibt bei Updates einfach liegen – du tauschst nur index.html aus. -->
+<script src="config.js"></script>
 <script>
 /* =====================================================================
-   EINSTELLUNGEN – hier anpassen
+   GRUNDEINSTELLUNGEN – deine eigenen Werte gehören in config.js
    ===================================================================== */
 var CONFIG = {
   ort: 'Magdeburg',
@@ -272,6 +275,13 @@ var CONFIG = {
   ],
   fachFarbeSonst: ['#c9d3df', '#1b2433']
 };
+
+// Werte aus config.js übernehmen (überschreiben die Grundeinstellungen)
+if (window.HZ_CONFIG) {
+  for (var key in window.HZ_CONFIG) {
+    if (window.HZ_CONFIG.hasOwnProperty(key)) CONFIG[key] = window.HZ_CONFIG[key];
+  }
+}
 /* ===================================================================== */
 
 var TAGE = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
@@ -673,7 +683,7 @@ function renderStatus(){
   if (state.calTime) s.push('Kalender ' + hm(state.calTime) + (state.calError ? ' (alt)' : ''));
   else if (state.calError) s.push('Kalender nicht erreichbar');
   $('status').textContent = s.length ? 'Stand: ' + s.join(', ') : '';
-  $('demo').textContent = state.isDemo ? 'Beispieldaten – trag oben im Code bei kalenderApi deine Script-Adresse ein' : '';
+  $('demo').textContent = state.isDemo ? (window.HZ_CONFIG ? 'Beispieldaten – in config.js fehlt die Script-Adresse (kalenderApi)' : 'Beispieldaten – config.js fehlt im GitHub-Repo') : '';
 }
 
 /* ---------------- Start ---------------- */
